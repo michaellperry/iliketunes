@@ -15,6 +15,7 @@ namespace ILikeTunes.ViewModels
 
         private Independent<string> _tuneName = new Independent<string>();
         private Independent<Tune> _selectedTune = new Independent<Tune>();
+        private Independent<Individual> _selectedOtherIndividual = new Independent<Individual>();
 
         public MainViewModel(Community community, Individual individual)
         {
@@ -82,6 +83,34 @@ namespace ILikeTunes.ViewModels
                     return new List<Individual>();
 
                 return _selectedTune.Value.Individuals;
+            }
+        }
+
+        public Individual SelectedOtherIndividual
+        {
+            get { return _selectedOtherIndividual.Value; }
+            set { _selectedOtherIndividual.Value = value; }
+        }
+
+        public string OtherTunesCaption
+        {
+            get
+            {
+                if (_selectedOtherIndividual.Value != null)
+                    return _selectedOtherIndividual.Value.Name.Value + " also likes:";
+                else
+                    return null;
+            }
+        }
+
+        public IEnumerable<Tune> OtherTunes
+        {
+            get
+            {
+                if (_selectedOtherIndividual.Value != null)
+                    return _selectedOtherIndividual.Value.Tunes;
+                else
+                    return new List<Tune>();
             }
         }
     }

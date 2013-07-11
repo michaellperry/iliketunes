@@ -67,22 +67,50 @@
                     Command="{Binding UnlikeTune}"
                     Content="Unlike!" />
             </Grid>
-            <TextBlock
-                Margin="6"
-                Text="Others who like it:" />
         </StackPanel>
-        <ListBox
-            Grid.Row="3"
-            Margin="6"
-            ItemsSource="{Binding OtherIndividuals}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock
-                        Text="{Binding Name.Value}"
-                        FontSize="24" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <Grid
+            Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Orientation="Vertical">
+                <TextBlock
+                    Margin="6"
+                    Text="Others who like it:" />
+                <ListBox
+                    ItemsSource="{Binding OtherIndividuals}"
+                    SelectedItem="{Binding SelectedOtherIndividual, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Name.Value}"
+                                FontSize="24" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+            <StackPanel
+                Orientation="Vertical"
+                Grid.Column="1">
+                <TextBlock
+                    Margin="6"
+                    Text="{Binding OtherTunesCaption}" />
+                <ListBox
+                    ItemsSource="{Binding OtherTunes}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Name}"
+                                FontSize="24" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Grid>
         <TextBlock
             Grid.Row="4"
             Margin="6"
