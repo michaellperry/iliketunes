@@ -1,9 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <phone:PhoneApplicationPage
     x:Class="ILikeTunes.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,6 +12,8 @@
     SupportedOrientations="Portrait"
     Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     DataContext="{Binding Main, Source={StaticResource Locator}}">
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid
@@ -23,67 +23,99 @@
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
+                Height="Auto" />
+            <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
+        <ProgressBar
+            IsIndeterminate="{Binding Synchronizing}" />
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel
             x:Name="TitlePanel"
-            Grid.Row="0"
+            Grid.Row="1"
             Margin="12,17,0,28">
             <TextBlock
-                Text="MY APPLICATION"
+                Text="I LIKE TUNES"
                 Style="{StaticResource PhoneTextNormalStyle}"
                 Margin="12,0" />
-            <TextBlock
-                Text="page name"
-                Margin="9,-7,0,0"
-                Style="{StaticResource PhoneTextTitle1Style}" />
         </StackPanel>
         <!--ContentPanel - place additional content here-->
         <Grid
             x:Name="ContentPanel"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="12,0,12,0">
-            <StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel
+                Grid.Row="0">
+                <TextBlock
+                    Text="Hello, my name is:" />
                 <TextBox
                     Text="{Binding Name, Mode=TwoWay}" />
-                <ProgressBar
-                    IsIndeterminate="{Binding Synchronizing}" />
                 <TextBlock
-                    Text="{Binding LastException}"
-                    FontSize="28"
-                    TextWrapping="Wrap" />
+                    Text="I like:" />
+            </StackPanel>
+            <ListBox
+                Grid.Row="1"
+                ItemsSource="{Binding Tunes}"
+                SelectedItem="{Binding SelectedTune, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Name}"
+                            FontSize="24" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel
+                Grid.Row="2">
                 <TextBox
                     Text="{Binding TuneName, Mode=TwoWay}" />
-                <Button
-                    Command="{Binding LikeTune}"
-                    Content="Like!"/>
-                <ListBox
-                    ItemsSource="{Binding Tunes}"
-                    SelectedItem="{Binding SelectedTune, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                Text="{Binding Name}"
-                                FontSize="24"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Border
-                    BorderBrush="White"
-                    BorderThickness="2" />
-                <ListBox
-                    ItemsSource="{Binding OtherIndividuals}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                Text="{Binding Name.Value}"
-                                FontSize="24" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="*" />
+                        <ColumnDefinition
+                            Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Command="{Binding LikeTune}"
+                        Content="Like!" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding UnlikeTune}"
+                        Content="Unlike!" />
+                </Grid>
+                <TextBlock
+                    Text="Others who like it:" />
             </StackPanel>
+            <ListBox
+                Grid.Row="3"
+                ItemsSource="{Binding OtherIndividuals}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Name.Value}"
+                            FontSize="24" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock
+                Grid.Row="4"
+                Text="{Binding LastException}"
+                FontSize="28"
+                TextWrapping="Wrap" />
         </Grid>
     </Grid>
 </phone:PhoneApplicationPage>

@@ -66,5 +66,24 @@ namespace ILikeTunes.ViewModels
         {
             get { return _individual.Tunes; }
         }
+
+        private Independent<Tune> _selectedTune = new Independent<Tune>();
+
+        public Tune SelectedTune
+        {
+            get { return _selectedTune; }
+            set { _selectedTune.Value = value; }
+        }
+
+        public IEnumerable<Individual> OtherIndividuals
+        {
+            get
+            {
+                if (_selectedTune.Value == null)
+                    return new List<Individual>();
+
+                return _selectedTune.Value.Individuals;
+            }
+        }
     }
 }

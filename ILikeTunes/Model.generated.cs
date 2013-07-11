@@ -3,8 +3,10 @@ using System.Linq;
 using UpdateControls.Correspondence;
 using UpdateControls.Correspondence.Mementos;
 using UpdateControls.Correspondence.Strategy;
+using UpdateControls.Correspondence.Tasks;
 using System;
 using System.IO;
+using System.Threading;
 
 /**
 / For use with http://graphviz.org/
@@ -53,36 +55,85 @@ namespace ILikeTunes
 				Individual fact = (Individual)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._anonymousId);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Individual.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Individual.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Individual", 1);
+			"ILikeTunes.Individual", 8);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Individual GetUnloadedInstance()
+        {
+            return new Individual((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Individual GetNullInstance()
+        {
+            return new Individual((FactMemento)null) { IsNull = true };
+        }
+
+        public Individual Ensure()
+        {
+            if (_loadedTask != null)
+            {
+                ManualResetEvent loaded = new ManualResetEvent(false);
+                Individual fact = null;
+                _loadedTask.ContinueWith(delegate(Task<CorrespondenceFact> t)
+                {
+                    fact = (Individual)t.Result;
+                    loaded.Set();
+                });
+                loaded.WaitOne();
+                return fact;
+            }
+            else
+                return this;
+        }
+
         // Roles
 
         // Queries
-        public static Query MakeQueryName()
+        private static Query _cacheQueryName;
+
+        public static Query GetQueryName()
 		{
-			return new Query()
-				.JoinSuccessors(Individual__name.RoleIndividual, Condition.WhereIsEmpty(Individual__name.MakeQueryIsCurrent())
+            if (_cacheQueryName == null)
+            {
+			    _cacheQueryName = new Query()
+    				.JoinSuccessors(Individual__name.GetRoleIndividual(), Condition.WhereIsEmpty(Individual__name.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryName;
 		}
-        public static Query QueryName = MakeQueryName();
-        public static Query MakeQueryTunes()
+        private static Query _cacheQueryTunes;
+
+        public static Query GetQueryTunes()
 		{
-			return new Query()
-				.JoinSuccessors(Like.RoleIndividual)
-				.JoinPredecessors(Like.RoleTune)
-            ;
+            if (_cacheQueryTunes == null)
+            {
+			    _cacheQueryTunes = new Query()
+		    		.JoinSuccessors(Like.GetRoleIndividual())
+		    		.JoinPredecessors(Like.GetRoleTune())
+                ;
+            }
+            return _cacheQueryTunes;
 		}
-        public static Query QueryTunes = MakeQueryTunes();
 
         // Predicates
 
@@ -113,8 +164,8 @@ namespace ILikeTunes
         // Result initializer
         private void InitializeResults()
         {
-            _name = new Result<Individual__name>(this, QueryName);
-            _tunes = new Result<Tune>(this, QueryTunes);
+            _name = new Result<Individual__name>(this, GetQueryName(), Individual__name.GetUnloadedInstance, Individual__name.GetNullInstance);
+            _tunes = new Result<Tune>(this, GetQueryTunes(), Tune.GetUnloadedInstance, Tune.GetNullInstance);
         }
 
         // Predecessor access
@@ -180,40 +231,100 @@ namespace ILikeTunes
 				Individual__name fact = (Individual__name)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Individual__name.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Individual__name.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Individual__name", 1);
+			"ILikeTunes.Individual__name", 1335857788);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Individual__name GetUnloadedInstance()
+        {
+            return new Individual__name((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Individual__name GetNullInstance()
+        {
+            return new Individual__name((FactMemento)null) { IsNull = true };
+        }
+
+        public Individual__name Ensure()
+        {
+            if (_loadedTask != null)
+            {
+                ManualResetEvent loaded = new ManualResetEvent(false);
+                Individual__name fact = null;
+                _loadedTask.ContinueWith(delegate(Task<CorrespondenceFact> t)
+                {
+                    fact = (Individual__name)t.Result;
+                    loaded.Set();
+                });
+                loaded.WaitOne();
+                return fact;
+            }
+            else
+                return this;
+        }
+
         // Roles
-        public static Role RoleIndividual = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"individual",
-			new CorrespondenceFactType("ILikeTunes.Individual", 1),
-			true));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("ILikeTunes.Individual__name", 1),
-			false));
+        private static Role _cacheRoleIndividual;
+        public static Role GetRoleIndividual()
+        {
+            if (_cacheRoleIndividual == null)
+            {
+                _cacheRoleIndividual = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "individual",
+			        Individual._correspondenceFactType,
+			        true));
+            }
+            return _cacheRoleIndividual;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Individual__name._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Individual__name.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Individual__name.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Individual> _individual;
@@ -232,8 +343,8 @@ namespace ILikeTunes
             )
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, individual);
-            _prior = new PredecessorList<Individual__name>(this, RolePrior, prior);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), individual);
+            _prior = new PredecessorList<Individual__name>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -241,8 +352,8 @@ namespace ILikeTunes
         private Individual__name(FactMemento memento)
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, memento);
-            _prior = new PredecessorList<Individual__name>(this, RolePrior, memento);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), memento, Individual.GetUnloadedInstance, Individual.GetNullInstance);
+            _prior = new PredecessorList<Individual__name>(this, GetRolePrior(), memento, Individual__name.GetUnloadedInstance, Individual__name.GetNullInstance);
         }
 
         // Result initializer
@@ -253,13 +364,13 @@ namespace ILikeTunes
         // Predecessor access
         public Individual Individual
         {
-            get { return _individual.Fact; }
+            get { return IsNull ? Individual.GetNullInstance() : _individual.Fact; }
         }
-        public IEnumerable<Individual__name> Prior
+        public PredecessorList<Individual__name> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -305,28 +416,72 @@ namespace ILikeTunes
 				Tune fact = (Tune)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._name);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Tune.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Tune.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Tune", 1);
+			"ILikeTunes.Tune", 8);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Tune GetUnloadedInstance()
+        {
+            return new Tune((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Tune GetNullInstance()
+        {
+            return new Tune((FactMemento)null) { IsNull = true };
+        }
+
+        public Tune Ensure()
+        {
+            if (_loadedTask != null)
+            {
+                ManualResetEvent loaded = new ManualResetEvent(false);
+                Tune fact = null;
+                _loadedTask.ContinueWith(delegate(Task<CorrespondenceFact> t)
+                {
+                    fact = (Tune)t.Result;
+                    loaded.Set();
+                });
+                loaded.WaitOne();
+                return fact;
+            }
+            else
+                return this;
+        }
+
         // Roles
 
         // Queries
-        public static Query MakeQueryIndividuals()
+        private static Query _cacheQueryIndividuals;
+
+        public static Query GetQueryIndividuals()
 		{
-			return new Query()
-				.JoinSuccessors(Like.RoleTune)
-				.JoinPredecessors(Like.RoleIndividual)
-            ;
+            if (_cacheQueryIndividuals == null)
+            {
+			    _cacheQueryIndividuals = new Query()
+		    		.JoinSuccessors(Like.GetRoleTune())
+		    		.JoinPredecessors(Like.GetRoleIndividual())
+                ;
+            }
+            return _cacheQueryIndividuals;
 		}
-        public static Query QueryIndividuals = MakeQueryIndividuals();
 
         // Predicates
 
@@ -356,7 +511,7 @@ namespace ILikeTunes
         // Result initializer
         private void InitializeResults()
         {
-            _individuals = new Result<Individual>(this, QueryIndividuals);
+            _individuals = new Result<Individual>(this, GetQueryIndividuals(), Individual.GetUnloadedInstance, Individual.GetNullInstance);
         }
 
         // Predecessor access
@@ -401,28 +556,83 @@ namespace ILikeTunes
 			{
 				Like fact = (Like)obj;
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Like.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Like.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Like", 1);
+			"ILikeTunes.Like", -304605072);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Like GetUnloadedInstance()
+        {
+            return new Like((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Like GetNullInstance()
+        {
+            return new Like((FactMemento)null) { IsNull = true };
+        }
+
+        public Like Ensure()
+        {
+            if (_loadedTask != null)
+            {
+                ManualResetEvent loaded = new ManualResetEvent(false);
+                Like fact = null;
+                _loadedTask.ContinueWith(delegate(Task<CorrespondenceFact> t)
+                {
+                    fact = (Like)t.Result;
+                    loaded.Set();
+                });
+                loaded.WaitOne();
+                return fact;
+            }
+            else
+                return this;
+        }
+
         // Roles
-        public static Role RoleIndividual = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"individual",
-			new CorrespondenceFactType("ILikeTunes.Individual", 1),
-			true));
-        public static Role RoleTune = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"tune",
-			new CorrespondenceFactType("ILikeTunes.Tune", 1),
-			true));
+        private static Role _cacheRoleIndividual;
+        public static Role GetRoleIndividual()
+        {
+            if (_cacheRoleIndividual == null)
+            {
+                _cacheRoleIndividual = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "individual",
+			        Individual._correspondenceFactType,
+			        true));
+            }
+            return _cacheRoleIndividual;
+        }
+        private static Role _cacheRoleTune;
+        public static Role GetRoleTune()
+        {
+            if (_cacheRoleTune == null)
+            {
+                _cacheRoleTune = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "tune",
+			        Tune._correspondenceFactType,
+			        true));
+            }
+            return _cacheRoleTune;
+        }
 
         // Queries
 
@@ -443,16 +653,16 @@ namespace ILikeTunes
             )
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, individual);
-            _tune = new PredecessorObj<Tune>(this, RoleTune, tune);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), individual);
+            _tune = new PredecessorObj<Tune>(this, GetRoleTune(), tune);
         }
 
         // Hydration constructor
         private Like(FactMemento memento)
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, memento);
-            _tune = new PredecessorObj<Tune>(this, RoleTune, memento);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), memento, Individual.GetUnloadedInstance, Individual.GetNullInstance);
+            _tune = new PredecessorObj<Tune>(this, GetRoleTune(), memento, Tune.GetUnloadedInstance, Tune.GetNullInstance);
         }
 
         // Result initializer
@@ -463,11 +673,11 @@ namespace ILikeTunes
         // Predecessor access
         public Individual Individual
         {
-            get { return _individual.Fact; }
+            get { return IsNull ? Individual.GetNullInstance() : _individual.Fact; }
         }
         public Tune Tune
         {
-            get { return _tune.Fact; }
+            get { return IsNull ? Tune.GetNullInstance() : _tune.Fact; }
         }
 
         // Field access
@@ -489,24 +699,24 @@ namespace ILikeTunes
 				new FactMetadata(new List<CorrespondenceFactType> { Individual._correspondenceFactType }));
 			community.AddQuery(
 				Individual._correspondenceFactType,
-				Individual.QueryName.QueryDefinition);
+				Individual.GetQueryName().QueryDefinition);
 			community.AddQuery(
 				Individual._correspondenceFactType,
-				Individual.QueryTunes.QueryDefinition);
+				Individual.GetQueryTunes().QueryDefinition);
 			community.AddType(
 				Individual__name._correspondenceFactType,
 				new Individual__name.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Individual__name._correspondenceFactType }));
 			community.AddQuery(
 				Individual__name._correspondenceFactType,
-				Individual__name.QueryIsCurrent.QueryDefinition);
+				Individual__name.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				Tune._correspondenceFactType,
 				new Tune.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Tune._correspondenceFactType }));
 			community.AddQuery(
 				Tune._correspondenceFactType,
-				Tune.QueryIndividuals.QueryDefinition);
+				Tune.GetQueryIndividuals().QueryDefinition);
 			community.AddType(
 				Like._correspondenceFactType,
 				new Like.CorrespondenceFactFactory(fieldSerializerByType),

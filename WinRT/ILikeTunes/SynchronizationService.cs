@@ -33,6 +33,8 @@ namespace ILikeTunes
             _community.Register<CorrespondenceModel>();
             _community.Subscribe(() => _individual.Value);
             _community.Subscribe(() => _individual.Value.Tunes);
+            _community.Subscribe(() => _individual.Value.Tunes
+                .SelectMany(t => t.Individuals));
 
             // Synchronize periodically.
             DispatcherTimer timer = new DispatcherTimer();

@@ -7,6 +7,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRT", "WinRT", "{B2CE5309
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILikeTunes", "WinRT\ILikeTunes\ILikeTunes.csproj", "{6BB4A0DC-5C3C-46EC-B113-A26D2C05361E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F8FD5CF6-FE1B-4522-BE83-8BA74672A3EC}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WP", "WP", "{A540FBE9-E2E5-402E-B086-4710CC21C6D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,5 +78,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6BB4A0DC-5C3C-46EC-B113-A26D2C05361E} = {B2CE5309-98C8-4B24-83BE-91680D3EC8E9}
+		{BFE9E91A-B997-4A8C-A7CE-6ED3CA75C245} = {A540FBE9-E2E5-402E-B086-4710CC21C6D8}
 	EndGlobalSection
 EndGlobal
