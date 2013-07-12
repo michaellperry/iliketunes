@@ -27,9 +27,9 @@ namespace ILikeTunes
             _community.AddAsynchronousCommunicationStrategy(communication);
             _community.Register<CorrespondenceModel>();
             _community.Subscribe(() => _individual);
-            _community.Subscribe(() => _individual.Tunes);
-            _community.Subscribe(() => _individual.Tunes
-                .SelectMany(t => t.Individuals));
+            //_community.Subscribe(() => _individual.Tunes);
+            //_community.Subscribe(() => _individual.Tunes
+            //    .SelectMany(t => t.Individuals));
 
             _individual = _community.AddFact(new Individual(GetAnonymousUserId()));
             http.Individual = _individual;

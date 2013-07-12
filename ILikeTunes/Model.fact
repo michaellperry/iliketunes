@@ -6,27 +6,4 @@ key:
 
 mutable:
 	publish string name;
-
-query:
-	Tune* tunes {
-		Like l : l.individual = this
-		Tune t : l.tune = t
-	}
-}
-
-fact Tune {
-key:
-	string name;
-
-query:
-	Individual* individuals {
-		Like l : l.tune = this
-		Individual i : l.individual = i
-	}
-}
-
-fact Like {
-key:
-	publish Individual individual;
-	publish Tune tune;
 }
