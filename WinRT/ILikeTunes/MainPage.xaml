@@ -18,16 +18,17 @@
         </Grid.RowDefinitions>
         <StackPanel
             Grid.Row="0">
-            <ProgressBar
-                IsIndeterminate="{Binding Synchronizing}" />
             <TextBlock
                 Margin="6"
+                FontSize="20"
                 Text="Hello, my name is:" />
             <TextBox
                 Margin="6"
+                FontSize="24"
                 Text="{Binding Name, Mode=TwoWay}" />
             <TextBlock
                 Margin="6"
+                FontSize="20"
                 Text="I like:" />
         </StackPanel>
         <ListBox
@@ -47,6 +48,7 @@
             Grid.Row="2">
             <TextBox
                 Margin="6"
+                FontSize="24"
                 Text="{Binding TuneName, Mode=TwoWay}" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -80,6 +82,7 @@
                 Orientation="Vertical">
                 <TextBlock
                     Margin="6"
+                    FontSize="20"
                     Text="Others who like it:" />
                 <ListBox
                     ItemsSource="{Binding OtherIndividuals}"
@@ -98,6 +101,7 @@
                 Grid.Column="1">
                 <TextBlock
                     Margin="6"
+                    FontSize="20"
                     Text="{Binding OtherTunesCaption}" />
                 <ListBox
                     ItemsSource="{Binding OtherTunes}">
