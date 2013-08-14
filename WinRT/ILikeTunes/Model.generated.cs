@@ -14,9 +14,8 @@ digraph "ILikeTunes"
     rankdir=BT
     Individual__name -> Individual [color="red"]
     Individual__name -> Individual__name [label="  *"]
-    Like -> Individual [color="red"]
-    Like -> Tune [color="red"]
-    Dislike -> Like
+    Like -> Individual
+    Like -> Tune
 }
 **/
 
@@ -119,8 +118,7 @@ namespace ILikeTunes
             if (_cacheQueryTunes == null)
             {
 			    _cacheQueryTunes = new Query()
-    				.JoinSuccessors(Like.GetRoleIndividual(), Condition.WhereIsEmpty(Like.GetQueryIsCurrent())
-				)
+		    		.JoinSuccessors(Like.GetRoleIndividual())
 		    		.JoinPredecessors(Like.GetRoleTune())
                 ;
             }
@@ -454,8 +452,7 @@ namespace ILikeTunes
             if (_cacheQueryIndividuals == null)
             {
 			    _cacheQueryIndividuals = new Query()
-    				.JoinSuccessors(Like.GetRoleTune(), Condition.WhereIsEmpty(Like.GetQueryIsCurrent())
-				)
+		    		.JoinSuccessors(Like.GetRoleTune())
 		    		.JoinPredecessors(Like.GetRoleIndividual())
                 ;
             }
@@ -549,7 +546,7 @@ namespace ILikeTunes
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Like", -304605072);
+			"ILikeTunes.Like", -304605224);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
@@ -586,7 +583,7 @@ namespace ILikeTunes
 			        _correspondenceFactType,
 			        "individual",
 			        Individual._correspondenceFactType,
-			        true));
+			        false));
             }
             return _cacheRoleIndividual;
         }
@@ -599,27 +596,14 @@ namespace ILikeTunes
 			        _correspondenceFactType,
 			        "tune",
 			        Tune._correspondenceFactType,
-			        true));
+			        false));
             }
             return _cacheRoleTune;
         }
 
         // Queries
-        private static Query _cacheQueryIsCurrent;
-
-        public static Query GetQueryIsCurrent()
-		{
-            if (_cacheQueryIsCurrent == null)
-            {
-			    _cacheQueryIsCurrent = new Query()
-		    		.JoinSuccessors(Dislike.GetRoleLike())
-                ;
-            }
-            return _cacheQueryIsCurrent;
-		}
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Individual> _individual;
@@ -671,132 +655,6 @@ namespace ILikeTunes
 
     }
     
-    public partial class Dislike : CorrespondenceFact
-    {
-		// Factory
-		internal class CorrespondenceFactFactory : ICorrespondenceFactFactory
-		{
-			private IDictionary<Type, IFieldSerializer> _fieldSerializerByType;
-
-			public CorrespondenceFactFactory(IDictionary<Type, IFieldSerializer> fieldSerializerByType)
-			{
-				_fieldSerializerByType = fieldSerializerByType;
-			}
-
-			public CorrespondenceFact CreateFact(FactMemento memento)
-			{
-				Dislike newFact = new Dislike(memento);
-
-
-				return newFact;
-			}
-
-			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
-			{
-				Dislike fact = (Dislike)obj;
-			}
-
-            public CorrespondenceFact GetUnloadedInstance()
-            {
-                return Dislike.GetUnloadedInstance();
-            }
-
-            public CorrespondenceFact GetNullInstance()
-            {
-                return Dislike.GetNullInstance();
-            }
-		}
-
-		// Type
-		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"ILikeTunes.Dislike", 692981976);
-
-		protected override CorrespondenceFactType GetCorrespondenceFactType()
-		{
-			return _correspondenceFactType;
-		}
-
-        // Null and unloaded instances
-        public static Dislike GetUnloadedInstance()
-        {
-            return new Dislike((FactMemento)null) { IsLoaded = false };
-        }
-
-        public static Dislike GetNullInstance()
-        {
-            return new Dislike((FactMemento)null) { IsNull = true };
-        }
-
-        // Ensure
-        public Task<Dislike> EnsureAsync()
-        {
-            if (_loadedTask != null)
-                return _loadedTask.ContinueWith(t => (Dislike)t.Result);
-            else
-                return Task.FromResult(this);
-        }
-
-        // Roles
-        private static Role _cacheRoleLike;
-        public static Role GetRoleLike()
-        {
-            if (_cacheRoleLike == null)
-            {
-                _cacheRoleLike = new Role(new RoleMemento(
-			        _correspondenceFactType,
-			        "like",
-			        Like._correspondenceFactType,
-			        false));
-            }
-            return _cacheRoleLike;
-        }
-
-        // Queries
-
-        // Predicates
-
-        // Predecessors
-        private PredecessorObj<Like> _like;
-
-        // Fields
-
-        // Results
-
-        // Business constructor
-        public Dislike(
-            Like like
-            )
-        {
-            InitializeResults();
-            _like = new PredecessorObj<Like>(this, GetRoleLike(), like);
-        }
-
-        // Hydration constructor
-        private Dislike(FactMemento memento)
-        {
-            InitializeResults();
-            _like = new PredecessorObj<Like>(this, GetRoleLike(), memento, Like.GetUnloadedInstance, Like.GetNullInstance);
-        }
-
-        // Result initializer
-        private void InitializeResults()
-        {
-        }
-
-        // Predecessor access
-        public Like Like
-        {
-            get { return IsNull ? Like.GetNullInstance() : _like.Fact; }
-        }
-
-        // Field access
-
-        // Query result access
-
-        // Mutable property access
-
-    }
-    
 
 	public class CorrespondenceModel : ICorrespondenceModel
 	{
@@ -830,13 +688,6 @@ namespace ILikeTunes
 				Like._correspondenceFactType,
 				new Like.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Like._correspondenceFactType }));
-			community.AddQuery(
-				Like._correspondenceFactType,
-				Like.GetQueryIsCurrent().QueryDefinition);
-			community.AddType(
-				Dislike._correspondenceFactType,
-				new Dislike.CorrespondenceFactFactory(fieldSerializerByType),
-				new FactMetadata(new List<CorrespondenceFactType> { Dislike._correspondenceFactType }));
 		}
 	}
 }

@@ -123,7 +123,7 @@ namespace ILikeTunes.ViewModels
         #endregion
 
         #region Dislike
-
+        /*
         public ICommand DislikeTune
         {
             get
@@ -138,7 +138,7 @@ namespace ILikeTunes.ViewModels
                     });
             }
         }
-
+        */
         #endregion
     }
 }

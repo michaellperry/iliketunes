@@ -10,7 +10,6 @@ mutable:
 query:
     Tune* tunes {
         Like l: l.individual = this
-            where l.isCurrent
         Tune t : t = l.tune
     }
 }
@@ -22,23 +21,12 @@ key:
 query:
     Individual* individuals {
         Like l : l.tune = this
-            where l.isCurrent
         Individual i : i = l.individual
     }
 }
 
 fact Like {
 key:
-    publish Individual individual;
-    publish Tune tune;
-
-query:
-    bool isCurrent {
-        not exists Dislike d : d.like = this
-    }
-}
-
-fact Dislike {
-key:
-    Like like;
+    Individual individual;
+    Tune tune;
 }
