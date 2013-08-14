@@ -92,8 +92,8 @@
                         Content="Like!" />
                     <Button
                         Grid.Column="1"
-                        Command="{Binding UnlikeTune}"
-                        Content="Unlike!" />
+                        Command="{Binding DislikeTune}"
+                        Content="Dislike!" />
                 </Grid>
             </StackPanel>
             <Grid

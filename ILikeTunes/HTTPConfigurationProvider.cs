@@ -20,7 +20,7 @@ namespace ILikeTunes
             {
                 string address = "http://169.254.80.80:8080/correspondence_server_web/bin";
                 string apiKey = "D1920D309A4E43EB85BD14833AFEF7E8";
-                int timeoutSeconds = 30;
+                int timeoutSeconds = 10;
                 return new HTTPConfiguration(address, "ILikeTunes", apiKey, timeoutSeconds);
             }
         }

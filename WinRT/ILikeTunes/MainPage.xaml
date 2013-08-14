@@ -66,8 +66,8 @@
                     Grid.Column="1"
                     Margin="6"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding UnlikeTune}"
-                    Content="Unlike!" />
+                    Command="{Binding DislikeTune}"
+                    Content="Dislike!" />
             </Grid>
         </StackPanel>
         <Grid

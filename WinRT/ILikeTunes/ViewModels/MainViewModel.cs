@@ -41,7 +41,6 @@ namespace ILikeTunes.ViewModels
         }
 
         #region LikeTune
-        /*
         private Independent<string> _tuneName = new Independent<string>();
 
         public string TuneName
@@ -63,11 +62,9 @@ namespace ILikeTunes.ViewModels
                     });
             }
         }
-        */
         #endregion
 
         #region Tunes
-        /*
         private Independent<Tune> _selectedTune = new Independent<Tune>();
 
         public IEnumerable<Tune> Tunes
@@ -80,11 +77,9 @@ namespace ILikeTunes.ViewModels
             get { return _selectedTune; }
             set { _selectedTune.Value = value; }
         }
-        */
         #endregion
 
         #region OtherIndividuals
-        /*
         private Independent<Individual> _selectedOtherIndividual = new Independent<Individual>();
 
         public IEnumerable<Individual> OtherIndividuals
@@ -125,7 +120,25 @@ namespace ILikeTunes.ViewModels
                     return new List<Tune>();
             }
         }
-        */
+        #endregion
+
+        #region Dislike
+
+        public ICommand DislikeTune
+        {
+            get
+            {
+                return MakeCommand
+                    .When(() => _selectedTune.Value != null)
+                    .Do(async delegate
+                    {
+                        Like like = await _community.FindFact(
+                            new Like(_individual, _selectedTune.Value)).EnsureAsync();
+                        await _community.AddFactAsync(new Dislike(like));
+                    });
+            }
+        }
+
         #endregion
     }
 }
