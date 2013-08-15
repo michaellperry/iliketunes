@@ -6,4 +6,48 @@ key:
 
 mutable:
 	publish string name;
+
+query:
+	Like* like {
+		Like l : l.individual = this
+    }
+
+	Tune* tunes {
+		Like l : l.individual = this
+            where l.isCurrent
+		Tune t : l.tune = t
+	}
+}
+
+fact Tune {
+key:
+	string name;
+
+query:
+	Individual* individuals {
+		Like l : l.tune = this
+            where l.isCurrent
+		Individual i : l.individual = i
+	}
+}
+
+fact Like {
+key:
+    purge where not this.isCurrent;
+
+    unique;
+    time timeLiked;
+	publish Individual individual
+        where this.isCurrent;
+	publish Tune tune;
+
+query:
+	bool isCurrent {
+		not exists Dislike d : d.like = this
+	}
+}
+
+fact Dislike {
+key:
+	Like like;
 }
